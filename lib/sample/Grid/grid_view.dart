@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 class GridViewSample extends StatefulWidget {
   const GridViewSample({super.key});
@@ -104,14 +105,47 @@ class _GridViewSampleState extends State<GridViewSample> {
             crossAxisCount: _columnsCount,
             crossAxisSpacing: 4,
             mainAxisSpacing: 4),
-        itemBuilder: ((context, index) => Container(
-            color: Colors.teal,
-            child: Center(
-              child: Text(
-                index.toString(),
-                style: const TextStyle(fontSize: 32, color: Colors.white),
+        itemBuilder: (context, index) {
+          // ランダムで色を作成する
+          final Color colorGenerator =
+              Color((math.Random(index).nextDouble() * 0x00FFFFFF).toInt())
+                  .withOpacity(1);
+          // 色を輝度で返す (0.0 ~ 1)
+          final double colorBrightness = colorGenerator.computeLuminance();
+          return Stack(
+            children: [
+              Container(
+                color: colorGenerator,
+                child: Center(
+                  child: Text(index.toString(),
+                      style: TextStyle(
+                        fontSize: 42,
+                        color:
+                            colorBrightness > 0.5 ? Colors.black : Colors.white,
+                      )),
+                ),
               ),
-            ))),
+              Positioned(
+                  right: 10,
+                  bottom: 7.5,
+                  // カラーコードを表示
+                  child: Text(
+                      colorGenerator
+                          .toString()
+                          .toUpperCase()
+                          // 文字列切り出し
+                          .substring(6, 16)
+                          // 文字列置換
+                          .replaceAll("0X", "#"),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color:
+                            colorBrightness > 0.5 ? Colors.black : Colors.white,
+                        //  Colors.white,
+                      ))),
+            ],
+          );
+        },
       ),
     );
   }
